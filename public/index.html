@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Express File Upload</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./styles/style.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    .submit-btn {
+      background-color: #000A12;
+      color: white;
+      height: 50px;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      margin: 20px auto;
+      font-size: 20px;
+      border-radius: 0;
+    }
+
+    .submit-btn:hover {
+      background-color: transparent;
+      border-width: 2px;
+      border-color: #000A12;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+
+      </div>
+    </div>
+  </nav>
+
+  <div class="container text-center">
+    <div class="col-sm-12">
+      <div class="form">
+        <h1>Upload a jpg or mp4 file!</h1>
+
+        <!-- IMAGE UPLOAD FORM -->
+        <form action="upload" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <!-- <input type="file" name="upload"> -->
+            <!-- <input style="margin: 10px; align-content: flex-start" type="file" required name="file_upload"> -->
+            <div class="input-group input-file" name="file_upload">
+              <input type="text" class="form-control" style="height: 50px;" placeholder='Choose a file...' />
+              <span class="input-group-btn">
+                <button class="btn btn-default btn-choose" type="button"
+                  style="background-color: #000A12; color: white; height: 50px; width: 100px;">Choose</button>
+              </span>
+
+
+            </div>
+          </div>
+
+          <label for="sel1" style="margin-top: 10px ;">Model (select one):</label>
+
+          <select class="form-control" style="height: 50px;" id="sel1" name="model_name">
+            <option value="yolo" class="title-item">YOLO</option>
+            <option value="sniper" class="title-item">SNIPER</option>
+            <option value="retina" class="title-item">Retina</option>
+          </select>
+
+          <button class="btn submit-btn" type="submit">UPLOAD</button>
+      </div>
+      </form>
+
+      <p class="title-item">Link - {{resultLink}} &export=download</p>
+
+    </div>
+  </div>
+
+  <script>
+    function bs_input_file() {
+      $(".input-file").before(
+        function () {
+          if (!$(this).prev().hasClass('input-ghost')) {
+            var element = $("<input type='file' class='input-ghost' style='visibility:hidden; height:0'>");
+            element.attr("name", $(this).attr("name"));
+            element.change(function () {
+              element.next(element).find('input').val((element.val()).split('\\').pop());
+            });
+            $(this).find("button.btn-choose").click(function () {
+              element.click();
+            });
+            $(this).find("button.btn-reset").click(function () {
+              element.val(null);
+              $(this).parents(".input-file").find('input').val('');
+            });
+            $(this).find('input').css("cursor", "pointer");
+            $(this).find('input').mousedown(function () {
+              $(this).parents('.input-file').prev().click();
+              return false;
+            });
+            return element;
+          }
+        }
+      );
+    }
+    $(function () {
+      bs_input_file();
+    });
+  </script>
+</body>
+
+</html>
