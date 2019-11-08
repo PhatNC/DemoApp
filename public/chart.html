@@ -7,19 +7,51 @@
     google.charts.load('current', { 'packages': ['bar'] });
     google.charts.setOnLoadCallback(drawChart);
 
+    let arrCount = {
+      'pedestrian': 0,
+      'people': 0,
+      'bicycle': 0,
+      'car': 0,
+      'van': 0,
+      'truck': 0,
+      'tricycle': 0,
+      'awningtricycle': 0,
+      'bus': 0,
+      'motor': 0
+    }
+
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+
+    var urlParams = new URLSearchParams(window.location.search);
+
+    var obj = urlParams.toString().split('&');
+
+    obj.forEach(element => {
+      if (element.length > 0) {
+        objInfo = element.split('=');
+        className = objInfo[0];
+        arrCount[objInfo[0]] = parseInt(objInfo[1]);
+      }
+    });
+
     function drawChart() {
       var data = google.visualization.arrayToDataTable([
         ['Class Name', 'Number of Objects'],
-        ['pedestrian', 5],
-        ['people', 11],
-        ['bicycle', 23],
-        ['car', 7],
-        ['van', 1],
-        ['truck', 25],
-        ['tricycle', 4],
-        ['awning-tricycle', 7],
-        ['bus', 6],
-        ['motor', 10]
+        ['pedestrian', arrCount.pedestrian],
+        ['people', arrCount.people],
+        ['bicycle', arrCount.bicycle],
+        ['car', arrCount.car],
+        ['van', arrCount.van],
+        ['truck', arrCount.truck],
+        ['tricycle', arrCount.tricycle],
+        ['awning-tricycle', arrCount.awningtricycle],
+        ['bus', arrCount.bus],
+        ['motor', arrCount.motor]
       ]);
 
       var options = {
@@ -31,7 +63,6 @@
       };
 
       var chart = new google.charts.Bar(document.getElementById('barchart_material'));
-
       chart.draw(data, google.charts.Bar.convertOptions(options));
     }
   </script>
@@ -39,8 +70,9 @@
 
 <body>
   <div id="barchart_material" style="width: 100%; height: 500px;"></div>
-  <div>
-    <p><b>Link result: </b><a href="{{rsLink}}">Link</a></p>
+
+  <p><a href="index.html">Back to Homepage</a></p>
+  <p><a href="/chart">Back to Chart</a></p>
   </div>
 </body>
 

@@ -5,6 +5,7 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 
 const uploader = require('./routes/upload')
+const chart = require('./routes/chart')
 // const chart = require('./routes/chart')
 const path = require('path');
 
@@ -29,8 +30,11 @@ app.get('/', function (req, res) {
 app.post('/upload', uploader);
 
 app.get('/chart', function (req, res) {
-  res.render('chart.html');
+  res.render('uploadChart.html');
 });
+
+app.post('/chart/upload',chart);
+app.get('/chart/show',chart);
 
 // app.use('/chart', chart);
 // RUN SERVER
