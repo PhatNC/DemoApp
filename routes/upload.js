@@ -4,7 +4,6 @@ const multer = require('multer');
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-const async = require('async')
 const querystring = require("querystring")
 const net = require('net');
 
@@ -119,12 +118,12 @@ function getAccessToken(oAuth2Client, callback) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 
-function sendPackage() {
-
-}
-
 
 async function uploadFile(auth) {
+
+    // tempRes.direct('/chart');
+
+
     const drive = google.drive({
         version: 'v3',
         auth: auth
@@ -196,14 +195,25 @@ async function uploadFile(auth) {
             });
             client.on('data', (data) => {
                 console.log('Reply');
-                console.log(data.toString('utf-8'));
+                // console.log(data.toString('utf-8'));
                 resultLink = data.toString('utf-8');
                 console.log('resultLink');
                 console.log(resultLink);
                 console.log('====');
 
-
-                tempRes.send('<div><a href="' + resultLink + '">' + resultLink + '</a>' + '<a href="index.html">Up Another File</a></div>');
+                if (model_name == 'yolo' || model_name == 'retina') {
+                    let link = resultLink.split(',');
+                    console.log('Link 1' + link[0]);
+                    console.log('Link 2' + link[1]);
+                    // tempRes.redirect('/chart');
+                    tempRes.send('<div><a href="' + link[0] + '">Link file result' + link[0] + '</a></div>'
+                        + '<div><a href="' + link[1] + '">Link bounding box' + link[1] + '</a></div>'
+                        + '<div><a href="index.html">Up Another File</a></div>');
+                }
+                else {
+                    tempRes.send('<div><a href="' + resultLink + '">Link file result' + resultLink + '</a></div>'
+                        + '<div><a href="index.html">Up Another File</a></div>');
+                }
 
                 client.destroy();
                 // callback, when app replies with data
@@ -223,6 +233,7 @@ async function uploadFile(auth) {
 
 router.post('/upload', multer(multerConfig).single('file_upload'), function (req, res) {
     fileUploaded = req.file
+    // res.redirect('/chart')
     tempRes = res;
     model_name = req.body.model_name;
     // Load client secrets from a local file.
@@ -233,5 +244,6 @@ router.post('/upload', multer(multerConfig).single('file_upload'), function (req
 
     });
 })
+
 
 module.exports = router
