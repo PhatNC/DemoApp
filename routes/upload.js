@@ -6,8 +6,11 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const querystring = require("querystring")
 const net = require('net');
+const Axios = require('axios')
+const path = require('path') 
 
-
+var file_url = '';
+var DOWNLOAD_DIR = './downloads/';
 
 var url_share = '';
 var model_name = '';
@@ -57,7 +60,7 @@ var fileUploaded = ''
 //GOOGLE DRIVE API
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -118,6 +121,31 @@ function getAccessToken(oAuth2Client, callback) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 
+async function downloadFile(urlFile) {
+    const url = urlFile;
+    const fpath = path.resolve(__dirname, '../downloads', 'temp.txt')
+    const writer = fs.createWriteStream(fpath)
+
+    const response = await Axios({
+        url,
+        method: 'GET',
+        responseType: 'stream'
+    })
+
+    response.data.pipe(writer)
+
+    return new Promise((resolve, reject) => {
+        writer.on('finish', resolve)
+        writer.on('error', reject)
+    })
+}
+
+
+function showResult(auth) {
+    file_url = resultLink.split(',')[1];
+    downloadFile(file_url);
+
+}
 
 async function uploadFile(auth) {
 
@@ -178,8 +206,8 @@ async function uploadFile(auth) {
         }
 
         if (type != '' && model_name != '') {
-            var link = file.data.webContentLink.toString();
-            let st = '"' + link + ', ' + type + ', ' + model_name + '"';
+            var linkInput = file.data.webContentLink.toString();
+            let st = '"' + linkInput + ', ' + type + ', ' + model_name + '"';
             url_share = st;
 
             const client = new net.Socket();
@@ -197,23 +225,29 @@ async function uploadFile(auth) {
                 console.log('Reply');
                 // console.log(data.toString('utf-8'));
                 resultLink = data.toString('utf-8');
+
                 console.log('resultLink');
                 console.log(resultLink);
                 console.log('====');
 
-                if (model_name == 'yolo' || model_name == 'retina') {
-                    let link = resultLink.split(',');
-                    console.log('Link 1' + link[0]);
-                    console.log('Link 2' + link[1]);
-                    // tempRes.redirect('/chart');
-                    tempRes.send('<div><a href="' + link[0] + '">Link file result' + link[0] + '</a></div>'
-                        + '<div><a href="' + link[1] + '">Link bounding box' + link[1] + '</a></div>'
-                        + '<div><a href="index.html">Up Another File</a></div>');
-                }
-                else {
-                    tempRes.send('<div><a href="' + resultLink + '">Link file result' + resultLink + '</a></div>'
-                        + '<div><a href="index.html">Up Another File</a></div>');
-                }
+                let linkOutput = resultLink.split(',');
+                console.log('Link 1' + linkOutput[0]);
+                console.log('Link 2' + linkOutput[1]);
+                // tempRes.redirect('/chart');
+                let htmlStr = '<h2>Result</h2>' +
+                    '<div><img src="' + linkOutput[0] + '"alt="Image Result" width="50%"></div>' +
+                    '<div><b>Link file result: </b><a href="' + linkOutput[0] + '">' + linkOutput[0] + '</a></div>' +
+                    '<div><b>Link bounding box: </b><a href="' + linkOutput[1] + '">' + linkOutput[1] + '</a></div>' +
+                    '<div><a href="/">Back to Home</a></div>';
+                tempRes.send(htmlStr);
+
+
+                fs.readFile('credentials.json', async function (err, content) {
+                    if (err) return console.log('Error loading client secret file:', err);
+                    // Authorize a client with credentials, then call the Google Drive API.
+                    authorize(JSON.parse(content), showResult);
+
+                });
 
                 client.destroy();
                 // callback, when app replies with data
@@ -224,6 +258,7 @@ async function uploadFile(auth) {
                 // callback, when socket is closed
             });
 
+            // showResult();
         }
     }
 

@@ -3,76 +3,78 @@
 
 <head>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
   <script type="text/javascript">
-    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.load("current", { packages: ["corechart"] });
     google.charts.setOnLoadCallback(drawChart);
-
-    let arrCount = {
-      'pedestrian': 0,
-      'people': 0,
-      'bicycle': 0,
-      'car': 0,
-      'van': 0,
-      'truck': 0,
-      'tricycle': 0,
-      'awningtricycle': 0,
-      'bus': 0,
-      'motor': 0
-    }
-
-    function getUrlParameter(name) {
-      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-      var results = regex.exec(location.search);
-      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
-
-    var urlParams = new URLSearchParams(window.location.search);
-
-    var obj = urlParams.toString().split('&');
-
-    obj.forEach(element => {
-      if (element.length > 0) {
-        objInfo = element.split('=');
-        className = objInfo[0];
-        arrCount[objInfo[0]] = parseInt(objInfo[1]);
-      }
-    });
-
     function drawChart() {
+      let arrCount = {
+        'pedestrian': 0,
+        'people': 0,
+        'bicycle': 0,
+        'car': 0,
+        'van': 0,
+        'truck': 0,
+        'tricycle': 0,
+        'awningtricycle': 0,
+        'bus': 0,
+        'motor': 0
+      }
+
+      var urlParams = new URLSearchParams(window.location.search);
+
+      var obj = urlParams.toString().split('&');
+
+      obj.forEach(element => {
+        if (element.length > 0) {
+          objInfo = element.split('=');
+          className = objInfo[0];
+          arrCount[objInfo[0]] = parseInt(objInfo[1]);
+        }
+      });
+
       var data = google.visualization.arrayToDataTable([
-        ['Class Name', 'Number of Objects'],
-        ['pedestrian', arrCount.pedestrian],
-        ['people', arrCount.people],
-        ['bicycle', arrCount.bicycle],
-        ['car', arrCount.car],
-        ['van', arrCount.van],
-        ['truck', arrCount.truck],
-        ['tricycle', arrCount.tricycle],
-        ['awning-tricycle', arrCount.awningtricycle],
-        ['bus', arrCount.bus],
-        ['motor', arrCount.motor]
+        ["Element", "Density", { role: "style" }],
+        ["pedestrian", arrCount.pedestrian, "#4285F6"],
+        ["people", arrCount.people, "#DC4439"],
+        ["bicycle", arrCount.bicycle, "#FFB20E"],
+        ["car", arrCount.car, "#109D58"],
+        ["van", arrCount.van, "#AB46BC"],
+        ["truck", arrCount.truck, "#00ACC4"],
+        ["tricycle", arrCount.tricycle, "#FF7143"],
+        ["awningtricycle", arrCount.awningtricycle, "#9F9F23"],
+        ["bus", arrCount.bus, "color: #4E5CA3"],
+        ["motor", arrCount.motor, "color: #F26192"]
       ]);
 
-      var options = {
-        chart: {
-          title: 'VisDrone 2019',
-          // subtitle: ': 2014-2017',
-        },
-        bars: 'horizontal' // Required for Material Bar Charts.
-      };
 
-      var chart = new google.charts.Bar(document.getElementById('barchart_material'));
-      chart.draw(data, google.charts.Bar.convertOptions(options));
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+        {
+          calc: "stringify",
+          sourceColumn: 1,
+          type: "string",
+          role: "annotation"
+        },
+        2]);
+
+      var options = {
+        title: "Objective Distribution",
+        height: 500,
+        bar: { groupWidth: "100%" },
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+      chart.draw(view, options);
     }
   </script>
 </head>
 
 <body>
-  <div id="barchart_material" style="width: 100%; height: 500px;"></div>
-
-  <p><a href="index.html">Back to Homepage</a></p>
-  <p><a href="/chart">Back to Chart</a></p>
+  <div id="barchart_values" style="width: 100%;"></div>
+  <div>
+    <p><a href="index.html">Back to Homepage</a></p>
+    <p><a href="/chart">Back to Chart</a></p>
   </div>
 </body>
 

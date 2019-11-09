@@ -64,7 +64,7 @@ router.post('/chart/upload', multer(multerConfig).single('file_upload'), functio
     // tempRes = res;
     // model_name = req.body.model_name;
     // // Load client secrets from a local file.
-    fs.readFile(fileUploaded.path, function (err, data) {
+    fs.readFile('./downloads/temp.txt', function (err, data) {
         if (err) throw err;
         // console.log('OK: ' + fileUploaded.originalname);
         // console.log(data.toString())
