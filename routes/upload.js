@@ -67,7 +67,7 @@ const multerConfig = {
             next(null, true);
         } else {
             console.log("File not supported");
-
+            isDone = false;
             //TODO:  A better message response to user on failure.
             return next();
         }
@@ -162,6 +162,19 @@ async function downloadFile(urlFile) {
 async function showResult(auth) {
     // file_url = resultLink.split(',')[1];
 
+    arrCount = {
+        'pedestrian': 0,
+        'people': 0,
+        'bicycle': 0,
+        'car': 0,
+        'van': 0,
+        'truck': 0,
+        'tricycle': 0,
+        'awningtricycle': 0,
+        'bus': 0,
+        'motor': 0
+    }
+
     await downloadFile(bbLink);
 
     fs.readFile('./downloads/temp.txt', function (err, data) {
@@ -189,7 +202,7 @@ async function showResult(auth) {
 
         console.log(query);
         // query = query.slice(0, -1);
-        isDone = true;
+
         tempRes.redirect('/chart/show?' + query);
     })
 
@@ -205,109 +218,113 @@ async function uploadFile(auth) {
         tempRes.redirect('/image?connect=' + isDone.toString());
         return;
     }
+    else {
 
-    const filesMetadata = {
-        // 'name': req.file.originalname
-        'name': fileUploaded.originalname
-    }
-    const media = {
-        mimeType: fileUploaded.mimeType,
-        body: fs.createReadStream(fileUploaded.path)
-    }
-    let driveResponse = await drive.files.create({
-        auth: auth,
-        resource: filesMetadata,
-        media: media
-    })
-
-    var fileId = driveResponse.data.id;
-    var permission =
-    {
-        role: "reader",
-        type: "anyone",
-        allowFileDiscovery: true
-    };
-
-    drive.permissions.create({
-        resource: permission,
-        fileId: fileId
-    })
-
-    let file = await drive.files.get({
-        fileId: fileId,
-        fields: '*' // to show every existing field
-    });
-
-    if (driveResponse.status == 200) {
-        let type = '';
-
-        switch (fileUploaded.mimetype) {
-            case "image/jpeg":
-                type = 'img';
-                break;
-            case "video/mp4":
-                type = 'video';
-                break;
-            default:
-                break;
+        const filesMetadata = {
+            // 'name': req.file.originalname
+            'name': fileUploaded.originalname
         }
+        const media = {
+            mimeType: fileUploaded.mimeType,
+            body: fs.createReadStream(fileUploaded.path)
+        }
+        let driveResponse = await drive.files.create({
+            auth: auth,
+            resource: filesMetadata,
+            media: media
+        })
 
-        if (type != '' && model_name != '') {
-            var linkInput = file.data.webContentLink.toString();
-            let st = '"' + linkInput + ', ' + type + ', ' + model_name + '"';
-            url_share = st;
+        var fileId = driveResponse.data.id;
+        var permission =
+        {
+            role: "reader",
+            type: "anyone",
+            allowFileDiscovery: true
+        };
 
-            const client = new net.Socket();
+        drive.permissions.create({
+            resource: permission,
+            fileId: fileId
+        })
 
-            const postData = querystring.stringify({
-                link: url_share
-            });
+        let file = await drive.files.get({
+            fileId: fileId,
+            fields: '*' // to show every existing field
+        });
 
-            client.connect(50000, '171.244.21.155', () => {
-                // callback, when connection successfull
-                console.log('Send');
-                client.write(postData);
-            });
-            client.on('data', (data) => {
-                console.log('Reply');
-                // console.log(data.toString('utf-8'));
-                resultLink = data.toString('utf-8');
+        if (driveResponse.status == 200) {
+            let type = '';
 
-                let linkOutput = resultLink.split(',');
+            switch (fileUploaded.mimetype) {
+                case "image/jpeg":
+                    type = 'img';
+                    break;
+                case "video/mp4":
+                    type = 'video';
+                    break;
+                default:
+                    break;
+            }
 
-                imgLink = linkOutput[0].replace('&export=download', '');
-                bbLink = linkOutput[1].replace('&export=download', '');
+            if (type != '' && model_name != '') {
+                var linkInput = file.data.webContentLink.toString();
+                let st = '"' + linkInput + ', ' + type + ', ' + model_name + '"';
+                url_share = st;
 
-                console.log('Link 1' + imgLink);
-                console.log('Link 2' + bbLink);
+                const client = new net.Socket();
 
-                fs.readFile('credentials.json', async function (err, content) {
-                    if (err) return console.log('Error loading client secret file:', err);
-                    // Authorize a client with credentials, then call the Google Drive API.
-                    authorize(JSON.parse(content), showResult);
-
+                const postData = querystring.stringify({
+                    link: url_share
                 });
 
-                client.destroy();
-                // callback, when app replies with data
-            });
-            client.on('close', (data) => {
-                if (!isDone) {
-                    tempRes.redirect('/image?connect=' + isDone.toString());
-                }
-                console.log('Closed');
+                client.connect(50000, '171.244.21.155', () => {
+                    // callback, when connection successfull
+                    console.log('Send');
+                    client.write(postData);
+                });
+                client.on('data', (data) => {
+                    console.log('Reply');
+                    // console.log(data.toString('utf-8'));
+                    resultLink = data.toString('utf-8');
 
-                // callback, when socket is closed
-            });
+                    let linkOutput = resultLink.split(',');
 
-            client.on('error', (err) => {
-                console.error('Something bad has happened! Failed Connect', err.stack);
-                tempRes.redirect('/image?connect=' + isDone.toString());
-                throw (err);
-            }).end();
-            // showResult();
+                    imgLink = linkOutput[0].replace('&export=download', '');
+                    bbLink = linkOutput[1].replace('&export=download', '');
+
+                    console.log('Link 1' + imgLink);
+                    console.log('Link 2' + bbLink);
+
+                    fs.readFile('credentials.json', async function (err, content) {
+                        if (err) return console.log('Error loading client secret file:', err);
+                        // Authorize a client with credentials, then call the Google Drive API.
+                        authorize(JSON.parse(content), showResult);
+
+                    });
+
+                    isDone = true;
+                    client.destroy();
+                    // callback, when app replies with data
+                });
+                client.on('close', (data) => {
+                    if (!isDone) {
+                        tempRes.redirect('/image?connect=' + isDone.toString());
+                    }
+                    console.log('Closed');
+
+                    // callback, when socket is closed
+                });
+
+                // client.on('error', (err) => {
+                //     console.error('Something bad has happened! Failed Connect', err.stack);
+                //     tempRes.redirect('/image?connect=' + isDone.toString());
+                //     // throw (err);
+                // })
+                // showResult();
+            }
         }
     }
+
 
 }
 
