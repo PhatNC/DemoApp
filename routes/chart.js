@@ -59,37 +59,29 @@ const multerConfig = {
 router.post('/chart/upload', multer(multerConfig).single('file_upload'), function (req, res) {
     fileUploaded = req.file
 
-    // console.log(fileUploaded);
-    // res.redirect('/chart')
-    // tempRes = res;
-    // model_name = req.body.model_name;
-    // // Load client secrets from a local file.
     fs.readFile('./downloads/temp.txt', function (err, data) {
         if (err) throw err;
-        // console.log('OK: ' + fileUploaded.originalname);
-        // console.log(data.toString())
         obj = data.toString().split('\n');
-        // console.log(obj);
         obj.forEach(element => {
             if (element.length > 0) {
-                // console.log(element);
                 objInfo = element.split(',');
                 className = objInfo[0];
                 arrCount[className] = arrCount[className] + 1;
-                // console.log(className + arrCount[className]);
             }
         });
-        // console.log(arrCount);
-        let query = 'pedestrian=' + arrCount['pedestrian'] +
-            '&people=' + arrCount['people'] +
-            '&bicycle=' + arrCount['bicycle'] +
-            '&car=' + arrCount['car'] +
-            '&van=' + arrCount['van'] +
-            '&truck=' + arrCount['truck'] +
-            '&tricycle=' + arrCount['tricycle'] +
-            '&awningtricycle=' + arrCount['awningtricycle'] +
-            '&bus=' + arrCount['bus'] +
-            '&motor=' + arrCount['motor'];
+
+        let query = '';
+
+        Object.keys(arrCount).forEach(function (key) {
+            var val = arrCount[key];
+
+            if (val > 0) {
+                query += key + '=' + val + '&'
+            }
+
+            console.log(key + val);
+        });
+        query = query.slice(0, -1);
         res.redirect('/chart/show?' + query);
     })
 })

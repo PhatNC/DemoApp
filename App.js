@@ -24,7 +24,15 @@ app.set('view engine', 'html');
 /* ROUTES
 **********/
 app.get('/', function (req, res) {
-  res.render('index.html');
+  res.render('dashboard.html');
+});
+
+app.get('/image', function (req, res) {
+  res.render('image.html');
+});
+
+app.get('/video', function (req, res) {
+  res.render('video.html');
 });
 
 app.post('/upload', uploader);

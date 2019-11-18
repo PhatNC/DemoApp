@@ -1,81 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-  <script type="text/javascript">
-    google.charts.load("current", { packages: ["corechart"] });
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      let arrCount = {
-        'pedestrian': 0,
-        'people': 0,
-        'bicycle': 0,
-        'car': 0,
-        'van': 0,
-        'truck': 0,
-        'tricycle': 0,
-        'awningtricycle': 0,
-        'bus': 0,
-        'motor': 0
-      }
-
-      var urlParams = new URLSearchParams(window.location.search);
-
-      var obj = urlParams.toString().split('&');
-
-      obj.forEach(element => {
-        if (element.length > 0) {
-          objInfo = element.split('=');
-          className = objInfo[0];
-          arrCount[objInfo[0]] = parseInt(objInfo[1]);
-        }
-      });
-
-      var data = google.visualization.arrayToDataTable([
-        ["Element", "Density", { role: "style" }],
-        ["pedestrian", arrCount.pedestrian, "#4285F6"],
-        ["people", arrCount.people, "#DC4439"],
-        ["bicycle", arrCount.bicycle, "#FFB20E"],
-        ["car", arrCount.car, "#109D58"],
-        ["van", arrCount.van, "#AB46BC"],
-        ["truck", arrCount.truck, "#00ACC4"],
-        ["tricycle", arrCount.tricycle, "#FF7143"],
-        ["awningtricycle", arrCount.awningtricycle, "#9F9F23"],
-        ["bus", arrCount.bus, "color: #4E5CA3"],
-        ["motor", arrCount.motor, "color: #F26192"]
-      ]);
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-        {
-          calc: "stringify",
-          sourceColumn: 1,
-          type: "string",
-          role: "annotation"
-        },
-        2]);
-
-      var options = {
-        title: "Objective Distribution",
-        height: 500,
-        bar: { groupWidth: "100%" },
-        legend: { position: "none" },
-      };
-      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-      chart.draw(view, options);
+<script type="text/javascript">
+  google.charts.load("current", { packages: ["corechart"] });
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    let arrCount = {
+      'pedestrian': 0,
+      'people': 0,
+      'bicycle': 0,
+      'car': 0,
+      'van': 0,
+      'truck': 0,
+      'tricycle': 0,
+      'awningtricycle': 0,
+      'bus': 0,
+      'motor': 0
     }
-  </script>
-</head>
+
+    var urlParams = (new URLSearchParams(window.location.search)).toString();
+
+
+    let classObjQuery = urlParams.slice(0, urlParams.indexOf('imgLink'));
+    let imgLink = urlParams.slice(urlParams.indexOf('imgLink'), urlParams.indexOf('bbLink') - 1).replace('imgLink=', '');
+    let bbLink = urlParams.slice(urlParams.indexOf('bbLink'), urlParams.toString().length).replace('bbLink=', '');
+
+    imgID = 'https://drive.google.com/uc?id=' + imgLink.slice(imgLink.indexOf('id%3D') + 5, imgLink.length);
+    bbID = 'https://drive.google.com/uc?id=' + bbLink.slice(bbLink.indexOf('id%3D') + 5, bbLink.length);
+
+    document.getElementById("idImgPic").setAttribute("src", imgID);
+    document.getElementById("idImgLink").setAttribute("href", imgID);
+    document.getElementById("idBBLink").setAttribute("href", bbID);
+
+    var obj = classObjQuery.split('&');
+
+    obj.forEach(element => {
+      if (element.length > 0) {
+        objInfo = element.split('=');
+        className = objInfo[0];
+        arrCount[objInfo[0]] = parseInt(objInfo[1]);
+      }
+    });
+
+    let parentArr = [];
+
+    parentArr = parentArr.concat([["Element", "Density", { role: "style" }]]);
+
+    let maxIndex = 0;
+
+    Object.keys(arrCount).forEach(function (key) {
+      let childArr = [];
+
+      var val = arrCount[key];
+      if (val > 0) {
+        childArr.push(key);
+        childArr.push(val);
+        childArr.push('#' + (Math.random() * 0xFFFFFF << 0).toString(16));
+        parentArr = parentArr.concat([childArr]);
+      }
+    });
+
+    // document.getElementById("myTextarea").value = parentArr;
+
+    var data = google.visualization.arrayToDataTable(parentArr);
+
+
+
+    var view = new google.visualization.DataView(data);
+    view.setColumns([0, 1,
+      {
+        calc: "stringify",
+        sourceColumn: 1,
+        type: "string",
+        role: "annotation"
+      },
+      2]);
+
+    var options = {
+      title: "Objective Distribution",
+      bar: { groupWidth: "60%" },
+      legend: { position: "none" },
+    };
+
+    // var optionsDonut = {
+    //   title: 'Objective Distribution',
+    //   pieHole: 0.4,
+    // };
+
+
+    var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+
+    // var chartDonut = new google.visualization.PieChart(document.getElementById('donutchart'));
+
+    chart.draw(view, options);
+
+    // chartDonut.draw(data, optionsDonut);
+
+  }
+</script>
+
+<style>
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Raleway", sans-serif
+  }
+
+  .bgimg-1 {
+    background-position: center;
+    background-size: cover;
+    background-image: url("./background.jpg");
+    min-height: 100%;
+  }
+
+  body,
+  html {
+    height: 100%;
+    line-height: 1.8;
+  }
+
+  .w3-bar .w3-button {
+    padding: 16px;
+  }
+
+  .btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    margin: 10px 0px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  /* Darker background on mouse-over */
+  .btn:hover {
+    background-color: RoyalBlue;
+  }
+
+  .label {
+    color: white;
+    padding: 8px;
+  }
+
+
+  div.polaroid {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    text-align: center;
+    display: inline-block;
+    /* height: 450px; */
+    /* margin: 20px; */
+  }
+
+  div.container {
+    padding: 10px;
+  }
+</style>
+
 
 <body>
-  <div id="barchart_values" style="width: 100%;"></div>
-  <div>
-    <p><a href="index.html">Back to Homepage</a></p>
-    <p><a href="/chart">Back to Chart</a></p>
+
+  <!-- Navbar (sit on top) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-card" id="myNavbar">
+      <a href="" class="w3-bar-item w3-button w3-wide">University of Information Technology</a>
+      <a href="/" class="w3-bar-item w3-button w3-wide">Home</a>
+      <div class="w3-right w3-hide-small">
+        <a href="/image" class="w3-bar-item w3-button w3-wide">Back</a>
+      </div>
+    </div>
   </div>
+
+  <!-- Header with full-height image -->
+  <header class="bgimg-1 w3-display-container">
+    <div class="container-fluid" style="padding-top: 80px;">
+
+      <div class="w3-content" style="max-width:95%;">
+        <!-- Grid -->
+        <div class="w3-row w3-padding w3-border" style="background-color: white;">
+
+          <!-- Blog entries -->
+          <div class="w3-col l8 s12">
+
+            <!-- Blog entry -->
+            <div class="w3-container w3-white w3-margin w3-padding-large w3-border" style=" min-height: 800px;">
+              <div class="w3-center">
+                <h3>VISUALIZATION</h3>
+                <!-- <h5>Title description, <span class="w3-opacity">May 2, 2016</span></h5> -->
+              </div>
+
+              <div class="w3-justify">
+                <img id="idImgPic" alt="Image Result" width="100%;">
+              </div>
+            </div>
+
+            <!-- END BLOG ENTRIES -->
+          </div>
+
+          <!-- About/Information menu -->
+          <div class="w3-col l4">
+            <div class="w3-container w3-white w3-margin w3-padding-large">
+              <div class="w3-center">
+                <h3>CHART</h3>
+              </div>
+              <div id="barchart_values" style="width: 100%; min-height: 300px;"></div>
+            </div>
+
+            <!-- Download Link -->
+            <div class="w3-container w3-white w3-margin w3-padding-large">
+              <div>
+                <div style="width: 200px; display: inline-block;"><b>Image: </b></div>
+
+                <a id="idImgLink">
+                  <button class="btn"><i class="fa fa-download"></i> Download</button>
+                </a>
+              </div>
+              <div>
+                <div style="width: 200px; display: inline-block;"><b>Distributional Description: </b></div>
+                <a id="idBBLink">
+                  <button class="btn"><i class="fa fa-download"></i> Download</button>
+                </a>
+              </div>
+            </div>
+            <!-- END About/Intro Menu -->
+          </div>
+
+          <!-- END GRID -->
+        </div>
+
+        <!-- END w3-content -->
+      </div>
+
+
+
+    </div>
+  </header>
 </body>
 
 </html>

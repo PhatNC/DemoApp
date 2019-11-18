@@ -1,113 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <title>Express File Upload</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./styles/style.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <style>
-    .submit-btn {
-      background-color: #000A12;
-      color: white;
-      height: 50px;
-      text-align: center;
-      text-decoration: none;
-      display: block;
-      margin: 20px auto;
-      font-size: 20px;
-      border-radius: 0;
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Raleway", sans-serif
     }
 
-    .submit-btn:hover {
-      background-color: transparent;
-      border-width: 2px;
-      border-color: #000A12;
-      color: black;
-      font-weight: bold;
+    body,
+    html {
+        height: 100%;
+        line-height: 1.8;
     }
-  </style>
-</head>
+
+    /* Full height image header */
+    .bgimg-1 {
+        background-position: center;
+        background-size: cover;
+        background-image: url("./background.jpg");
+        min-height: 100%;
+    }
+
+    .w3-bar .w3-button {
+        padding: 16px;
+    }
+</style>
 
 <body>
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <div class="navbar-header">
 
-      </div>
+    <!-- Navbar (sit on top) -->
+    <div class="w3-top">
+        <div class="w3-bar w3-white w3-card" id="myNavbar">
+            <a href="" class="w3-bar-item w3-button w3-wide">University of Information Technology</a>
+            <a href="/" class="w3-bar-item w3-button w3-wide">Home</a>
+        </div>
     </div>
-  </nav>
 
-  <div class="container text-center">
-    <div class="col-sm-12">
-      <div class="form">
-        <h1>Upload a jpg or mp4 file!</h1>
-
-        <!-- IMAGE UPLOAD FORM -->
-        <form action="upload" method="post" enctype="multipart/form-data">
-          <div class="form-group">
-            <!-- <input type="file" name="upload"> -->
-            <!-- <input style="margin: 10px; align-content: flex-start" type="file" required name="file_upload"> -->
-            <div class="input-group input-file" name="file_upload">
-              <input type="text" class="form-control" style="height: 50px;" placeholder='Choose a file...' />
-              <span class="input-group-btn">
-                <button class="btn btn-default btn-choose" type="button"
-                  style="background-color: #000A12; color: white; height: 50px; width: 100px;">Choose</button>
-              </span>
-
-
+    <!-- Header with full-height image -->
+    <header class="bgimg-1 w3-display-container" id="home">
+        <div class="w3-white w3-padding-large w3-large w3-margin-top w3-display-left"
+            style="padding:48px; margin: 48px; text-align: center; opacity:0.9;">
+            <span class="w3-jumbo w3-hide-small">VisDrone 2019 Objects Detection</span><br>
+            <!-- <span class="w3-large">Stop wasting valuable time with projects that just isn't you.</span> -->
+            <div>
+                <!-- <div style="display: inline-block;">
+                    <p><a href="/video" style="background-color: navy; color: white;"
+                            class="w3-button w3-padding-large w3-large w3-margin-top w3-hover-opacity-off">Try with
+                            Video</a></p>
+                </div> -->
+                <div style="display: inline-block;">
+                    <p><a href="/image" style="background-color: teal; color: white;"
+                            class="w3-button w3-padding-large w3-large w3-margin-top w3-hover-opacity-off">Try Demo</a></p>
+                </div>
             </div>
-          </div>
-
-          <label for="sel1" style="margin-top: 10px ;">Model (select one):</label>
-
-          <select class="form-control" style="height: 50px;" id="sel1" name="model_name">
-            <option value="yolo" class="title-item">YOLO</option>
-            <option value="sniper" class="title-item">SNIPER</option>
-            <option value="retina" class="title-item">Retina</option>
-          </select>
-
-          <button class="btn submit-btn" type="submit">UPLOAD</button>
-      </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    function bs_input_file() {
-      $(".input-file").before(
-        function () {
-          if (!$(this).prev().hasClass('input-ghost')) {
-            var element = $("<input type='file' class='input-ghost' style='visibility:hidden; height:0'>");
-            element.attr("name", $(this).attr("name"));
-            element.change(function () {
-              element.next(element).find('input').val((element.val()).split('\\').pop());
-            });
-            $(this).find("button.btn-choose").click(function () {
-              element.click();
-            });
-            $(this).find("button.btn-reset").click(function () {
-              element.val(null);
-              $(this).parents(".input-file").find('input').val('');
-            });
-            $(this).find('input').css("cursor", "pointer");
-            $(this).find('input').mousedown(function () {
-              $(this).parents('.input-file').prev().click();
-              return false;
-            });
-            return element;
-          }
-        }
-      );
-    }
-    $(function () {
-      bs_input_file();
-    });
-  </script>
+        </div>
+    </header>
 </body>
 
 </html>

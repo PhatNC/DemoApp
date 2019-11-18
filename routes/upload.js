@@ -7,7 +7,7 @@ const { google } = require('googleapis');
 const querystring = require("querystring")
 const net = require('net');
 const Axios = require('axios')
-const path = require('path') 
+const path = require('path')
 
 var file_url = '';
 var DOWNLOAD_DIR = './downloads/';
@@ -15,6 +15,23 @@ var DOWNLOAD_DIR = './downloads/';
 var url_share = '';
 var model_name = '';
 var resultLink = '';
+
+var imgLink = '';
+var bbLink = '';
+let isDone = false;
+
+let arrCount = {
+    'pedestrian': 0,
+    'people': 0,
+    'bicycle': 0,
+    'car': 0,
+    'van': 0,
+    'truck': 0,
+    'tricycle': 0,
+    'awningtricycle': 0,
+    'bus': 0,
+    'motor': 0
+}
 
 let tempRes;
 
@@ -49,7 +66,8 @@ const multerConfig = {
             console.log('File uploaded');
             next(null, true);
         } else {
-            console.log("File not supported")
+            console.log("File not supported");
+
             //TODO:  A better message response to user on failure.
             return next();
         }
@@ -141,32 +159,61 @@ async function downloadFile(urlFile) {
 }
 
 
-function showResult(auth) {
-    file_url = resultLink.split(',')[1];
-    downloadFile(file_url);
+async function showResult(auth) {
+    // file_url = resultLink.split(',')[1];
+
+    await downloadFile(bbLink);
+
+    fs.readFile('./downloads/temp.txt', function (err, data) {
+        if (err) throw err;
+        obj = data.toString().split('\n');
+        obj.forEach(element => {
+            if (element.length > 0) {
+                objInfo = element.split(',');
+                className = objInfo[0];
+                arrCount[className] = arrCount[className] + 1;
+            }
+        });
+
+        let query = '';
+
+        Object.keys(arrCount).forEach(function (key) {
+            var val = arrCount[key];
+            if (val > 0) {
+                query += key + '=' + val + '&'
+            }
+        });
+
+        query = query + 'imgLink=' + imgLink;
+        query = query + '&bbLink=' + bbLink;
+
+        console.log(query);
+        // query = query.slice(0, -1);
+        isDone = true;
+        tempRes.redirect('/chart/show?' + query);
+    })
 
 }
 
 async function uploadFile(auth) {
-
-    // tempRes.direct('/chart');
-
-
     const drive = google.drive({
         version: 'v3',
         auth: auth
     });
 
+    if (fileUploaded == undefined) {
+        tempRes.redirect('/image?connect=' + isDone.toString());
+        return;
+    }
+
     const filesMetadata = {
         // 'name': req.file.originalname
         'name': fileUploaded.originalname
     }
-
     const media = {
         mimeType: fileUploaded.mimeType,
         body: fs.createReadStream(fileUploaded.path)
     }
-
     let driveResponse = await drive.files.create({
         auth: auth,
         resource: filesMetadata,
@@ -226,21 +273,13 @@ async function uploadFile(auth) {
                 // console.log(data.toString('utf-8'));
                 resultLink = data.toString('utf-8');
 
-                console.log('resultLink');
-                console.log(resultLink);
-                console.log('====');
-
                 let linkOutput = resultLink.split(',');
-                console.log('Link 1' + linkOutput[0]);
-                console.log('Link 2' + linkOutput[1]);
-                // tempRes.redirect('/chart');
-                let htmlStr = '<h2>Result</h2>' +
-                    '<div><img src="' + linkOutput[0] + '"alt="Image Result" width="50%"></div>' +
-                    '<div><b>Link file result: </b><a href="' + linkOutput[0] + '">' + linkOutput[0] + '</a></div>' +
-                    '<div><b>Link bounding box: </b><a href="' + linkOutput[1] + '">' + linkOutput[1] + '</a></div>' +
-                    '<div><a href="/">Back to Home</a></div>';
-                tempRes.send(htmlStr);
 
+                imgLink = linkOutput[0].replace('&export=download', '');
+                bbLink = linkOutput[1].replace('&export=download', '');
+
+                console.log('Link 1' + imgLink);
+                console.log('Link 2' + bbLink);
 
                 fs.readFile('credentials.json', async function (err, content) {
                     if (err) return console.log('Error loading client secret file:', err);
@@ -253,11 +292,19 @@ async function uploadFile(auth) {
                 // callback, when app replies with data
             });
             client.on('close', (data) => {
+                if (!isDone) {
+                    tempRes.redirect('/image?connect=' + isDone.toString());
+                }
                 console.log('Closed');
 
                 // callback, when socket is closed
             });
 
+            client.on('error', (err) => {
+                console.error('Something bad has happened! Failed Connect', err.stack);
+                tempRes.redirect('/image?connect=' + isDone.toString());
+                throw (err);
+            }).end();
             // showResult();
         }
     }

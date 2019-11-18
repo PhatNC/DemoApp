@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+
+
+  <!--   
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+
+  <script type="text/javascript">
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      let arrCount = {
+        'pedestrian': 0,
+        'people': 0,
+        'bicycle': 0,
+        'car': 0,
+        'van': 0,
+        'truck': 0,
+        'tricycle': 0,
+        'awningtricycle': 0,
+        'bus': 0,
+        'motor': 0
+      }
+
+      var urlParams = (new URLSearchParams(window.location.search)).toString();
+
+
+      let classObjQuery = urlParams.slice(0, urlParams.indexOf('imgLink'));
+      let imgLink = urlParams.slice(urlParams.indexOf('imgLink'), urlParams.indexOf('bbLink') - 1).replace('imgLink=', '');
+      let bbLink = urlParams.slice(urlParams.indexOf('bbLink'), urlParams.toString().length).replace('bbLink=', '');
+
+      imgID = 'https://drive.google.com/uc?id=' + imgLink.slice(imgLink.indexOf('id%3D') + 5, imgLink.length);
+      bbID = 'https://drive.google.com/uc?id=' + bbLink.slice(bbLink.indexOf('id%3D') + 5, bbLink.length);
+
+      document.getElementById("idImgPic").setAttribute("src", imgID);
+      document.getElementById("idImgLink").setAttribute("href", imgID);
+      document.getElementById("idBBLink").setAttribute("href", bbID);
+
+      var obj = classObjQuery.split('&');
+
+      obj.forEach(element => {
+        if (element.length > 0) {
+          objInfo = element.split('=');
+          className = objInfo[0];
+          arrCount[objInfo[0]] = parseInt(objInfo[1]);
+        }
+      });
+
+      let parentArr = [];
+
+      parentArr = parentArr.concat([["Element", "Density", { role: "style" }]]);
+
+      let maxIndex = 0;
+
+      Object.keys(arrCount).forEach(function (key) {
+        let childArr = [];
+
+        var val = arrCount[key];
+        if (val > 0) {
+          childArr.push(key);
+          childArr.push(val);
+          childArr.push('#' + (Math.random() * 0xFFFFFF << 0).toString(16));
+          parentArr = parentArr.concat([childArr]);
+        }
+      });
+
+      // document.getElementById("myTextarea").value = parentArr;
+
+      var data = google.visualization.arrayToDataTable(parentArr);
+
+
+      // var data = google.visualization.arrayToDataTable([
+      //   ["Element", "Density", { role: "style" }],
+      //   ["pedestrian", 2, "#4285F6"],
+      //   ["bicycle", 2, "#FFB20E"],
+      //   ["car", 17, "#109D58"],
+      //   ["van", 5, "#AB46BC"],
+      //   ["truck", 4, "#00ACC4"]
+      // ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+        {
+          calc: "stringify",
+          sourceColumn: 1,
+          type: "string",
+          role: "annotation"
+        },
+        2]);
+
+      var options = {
+        title: "Objective Distribution",
+        height: 500,
+        bar: { groupWidth: "60%" },
+        legend: { position: "none" },
+      };
+
+      // var optionsDonut = {
+      //   title: 'Objective Distribution',
+      //   pieHole: 0.4,
+      // };
+
+
+      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+
+      // var chartDonut = new google.visualization.PieChart(document.getElementById('donutchart'));
+
+      chart.draw(view, options);
+
+      // chartDonut.draw(data, optionsDonut);
+
+    }
+  </script>
+
+  <style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "Raleway", sans-serif
+    }
+
+    body,
+    html {
+      height: 100%;
+      line-height: 1.8;
+    }
+
+    .w3-bar .w3-button {
+      padding: 16px;
+    }
+
+    .btn {
+      background-color: DodgerBlue;
+      border: none;
+      color: white;
+      margin: 10px 0px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    /* Darker background on mouse-over */
+    .btn:hover {
+      background-color: RoyalBlue;
+    }
+
+    .label {
+      color: white;
+      padding: 8px;
+    }
+
+    .success {
+      background-color: #4CAF50;
+    }
+
+    /* Green */
+    .info {
+      background-color: #2196F3;
+    }
+
+    /* Blue */
+    .warning {
+      background-color: #ff9800;
+    }
+
+    /* Orange */
+    .danger {
+      background-color: #f44336;
+    }
+
+    /* Red */
+    .other {
+      background-color: #e7e7e7;
+      color: black;
+    }
+
+    /* Gray */
+
+    div.polaroid {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      text-align: center;
+      display: inline-block;
+      /* height: 450px; */
+      /* margin: 20px; */
+    }
+
+    div.container {
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 
+  <textarea id="myTextarea">
+        342 Alvin Road
+        Ducksburg</textarea> -->
+
+  <!-- Navbar (sit on top) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-card" id="myNavbar">
+      <a href="" class="w3-bar-item w3-button w3-wide">University of Information Technology</a>
+
+      <a href="/" class="w3-bar-item w3-button w3-wide">Home</a>
+
+      <div class="w3-right w3-hide-small">
+        <a href="/image" class="w3-bar-item w3-button w3-wide">Back</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid" style="margin-top: 80px;">
+    <!-- <h2>Result</h2> -->
+
+    <div class="w3-row" style=" width: 100%;">
+      <div class="w3-col l6" style="background: transparent;  border-right: 5px solid black; padding: 20px;">
+        <div class="polaroid" style="width: 100%;">
+          <img id="idImgPic" alt="Image Result" width="100%;">
+        </div>
+
+      </div>
+      <div class="w3-col l6" style="background: transparent; padding: 20px;">
+        <div class="polaroid" style="width: 100%;">
+          <div id="barchart_values" style="width: 100%;"></div>
+
+
+        </div>
+      </div>
+
+    </div>
+    <div style="margin: 20px;">
+      <div>
+        <div style="width: 200px; display: inline-block;"><b>Image: </b></div>
+
+        <a id="idImgLink">
+          <button class="btn"><i class="fa fa-download"></i> Download</button>
+        </a>
+      </div>
+      <div>
+        <div style="width: 200px; display: inline-block;"><b>Distributional Description: </b></div>
+        <a id="idBBLink">
+          <button class="btn"><i class="fa fa-download"></i> Download</button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
