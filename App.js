@@ -5,7 +5,10 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 
 const uploader = require('./routes/upload')
+const uploaderVideo = require('./routes/uploadVideo')
+
 const chart = require('./routes/chart')
+const videoShow = require('./routes/streamVid')
 // const chart = require('./routes/chart')
 const path = require('path');
 
@@ -24,7 +27,7 @@ app.set('view engine', 'html');
 /* ROUTES
 **********/
 app.get('/', function (req, res) {
-  res.render('dashboard.html');
+  res.render('index.html');
 });
 
 app.get('/image', function (req, res) {
@@ -37,13 +40,15 @@ app.get('/video', function (req, res) {
 
 app.post('/upload', uploader);
 
+app.post('/uploadVideo', uploaderVideo);
+
 app.get('/chart', function (req, res) {
   res.render('uploadChart.html');
 });
 
 app.post('/chart/upload',chart);
 app.get('/chart/show',chart);
-
+app.get('/video/show',videoShow);
 // app.use('/chart', chart);
 // RUN SERVER
 app.listen(port, function () {

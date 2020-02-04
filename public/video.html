@@ -9,6 +9,22 @@
 <link rel="stylesheet" href="./styles/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+    function connectRS() {
+        var urlParams = (new URLSearchParams(window.location.search)).toString();
+        let result = urlParams.split('&')[0].replace('connect=', '');
+
+        if (result == 'false') {
+            document.getElementById("idRS").innerHTML = "Something was wrong! Please try again!";
+            document.getElementById("idAd").innerHTML = "Make sure that upload file is allowed and Connection is ready!";
+        }
+    }
+    // function myFunction() {
+    //     document.getElementById("btn_submit").disabled = true;
+    // }
+</script>
+
 <style>
     body,
     h1,
@@ -38,6 +54,10 @@
         padding: 16px;
     }
 
+    .danger {
+        background-color: #f44336;
+    }
+
     .submit-btn {
         background-color: #000A12;
         color: white;
@@ -59,9 +79,30 @@
         color: black;
         font-weight: bold;
     }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        /* Light grey */
+        border-top: 16px solid #3498db;
+        /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
-<body>
+<body onload="connectRS();">
 
     <!-- Navbar (sit on top) -->
     <div class="w3-top">
@@ -72,18 +113,18 @@
     </div>
 
     <!-- Header with full-height image -->
-    <header class="bgimg-1 w3-display-container" id="home">
+    <header class="bgimg-1 w3-display-container">
         <div class="w3-white w3-padding-large w3-large w3-margin-top w3-display-left"
-            style="padding:48px; margin: 48px; opacity:0.9;">
+            style="padding:48px; margin: 48px; opacity:0.9; text-align: center;">
             <span class="w3-jumbo w3-hide-small">Video Objects Dectection</span><br>
-            <!-- <span class="w3-large">Stop wasting valuable time with projects that just isn't you.</span> -->
-            <form action="upload" method="post" enctype="multipart/form-data">
-                <div class="form-group" style="margin: 20px; margin-left: 50px;">
+            <span class="w3-large">Please upload a file with only .mp4 extension</span>
+            <form action="uploadVideo" method="post" enctype="multipart/form-data">
+                <div class="form-group" style="margin: 20px;">
                     <!-- <input type="file" name="upload"> -->
                     <!-- <input style="margin: 10px; align-content: flex-start" type="file" required name="file_upload"> -->
                     <div class="input-group input-file" name="file_upload">
                         <input type="text" class="form-control" style="width: 500px; height: 50px;"
-                            placeholder='Choose a file...' />
+                            placeholder='Choose a file...'/>
                         <span class="input-group-btn">
                             <button class="btn btn-default btn-choose" type="button"
                                 style="background-color: #000A12; color: white; height: 50px; width: 100px; margin-left: 20px; border-color: #000A12;">Choose</button>
@@ -93,7 +134,9 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin: 20px; margin-left: 50px;">
+                <!-- <input type="file" accept="video/mp4" /> all video types -->
+
+                <div class="form-group" style="margin: 20px;">
                     <div style="height: 50px; display: inline-block;">
                         <label for="sel1">Model (select one):</label>
                     </div>
@@ -101,13 +144,21 @@
                     <select class="form-control" style="height: 50px; width: 450px; margin-left: 10px;" id="sel1"
                         name="model_name">
                         <option value="yolo" class="title-item">YOLO</option>
-                        <option value="sniper" class="title-item">SNIPER</option>
-                        <option value="retina" class="title-item">Retina</option>
+                        <option value="ssd" class="title-item">SSD</option>
                     </select>
                 </div>
-                <button class="btn submit-btn" type="submit">UPLOAD</button>
+                <button id="btn_submit" class="btn submit-btn" type="submit">UPLOAD</button>
+
+                <div class="alert alert-warning center" style="text-align: center; background-color: tomato;">
+                    <strong>
+                        <p id="idRS" style="margin: 0;"></p>
+                    </strong>
+                    <p id="idAd" style="margin: 0;"></p>
+                </div>
         </div>
+        <!-- <div class="loader center"></div> -->
         </form>
+
         </div>
     </header>
 

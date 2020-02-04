@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<title>Object Detecttion</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript">
+  google.charts.load("current", { packages: ["corechart"] });
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    let arrCount = {
+      'pedestrian': 0,
+      'people': 0,
+      'bicycle': 0,
+      'car': 0,
+      'van': 0,
+      'truck': 0,
+      'tricycle': 0,
+      'awningtricycle': 0,
+      'bus': 0,
+      'motor': 0
+    }
+
+    var urlParams = (new URLSearchParams(window.location.search)).toString();
+
+
+    let imgLink = urlParams.slice(urlParams.indexOf('vidLink'), urlParams.toString().length).replace('vidLink=', '');
+
+    imgID = 'https://drive.google.com/uc?id=' + imgLink.slice(imgLink.indexOf('id%3D') + 5, imgLink.length) + '&export=download';
+    streamLink = 'https://drive.google.com/file/d/' + imgLink.slice(imgLink.indexOf('id%3D') + 5, imgLink.length) + '/view';
+
+    // document.getElementById("idImgPic").setAttribute("src", imgID);
+    document.getElementById("idImgLink").setAttribute("href", imgID);
+    document.getElementById("idStreamLink").setAttribute("href", streamLink);
+
+
+  }
+</script>
+
+<style>
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Raleway", sans-serif
+  }
+
+  .bgimg-1 {
+    background-position: center;
+    background-size: cover;
+    background-image: url("./background.jpg");
+    min-height: 100%;
+  }
+
+  body,
+  html {
+    height: 100%;
+    line-height: 1.8;
+  }
+
+  .w3-bar .w3-button {
+    padding: 16px;
+  }
+
+  .btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    margin: 10px 0px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  /* Darker background on mouse-over */
+  .btn:hover {
+    background-color: RoyalBlue;
+  }
+
+  .label {
+    color: white;
+    padding: 8px;
+  }
+
+  bigword{
+    font-size: 30px;
+  }
+
+
+  div.polaroid {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    text-align: center;
+    display: inline-block;
+    /* height: 450px; */
+    /* margin: 20px; */
+  }
+
+  div.container {
+    padding: 10px;
+  }
+</style>
+
+
+<body>
+
+  <!-- Navbar (sit on top) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-card" id="myNavbar">
+      <a href="" class="w3-bar-item w3-button w3-wide">University of Information Technology</a>
+      <a href="/" class="w3-bar-item w3-button w3-wide">Home</a>
+      <div class="w3-right w3-hide-small">
+        <a href="/video" class="w3-bar-item w3-button w3-wide">Back</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header with full-height image -->
+  <header class="bgimg-1 w3-display-container">
+    <div class="container-fluid" style="padding-top: 80px;">
+
+      <div class="w3-content" style="max-width:90%;">
+        <!-- Grid -->
+        <div class="w3-row w3-padding w3-border" style="background-color: #DDD;">
+
+          
+
+          <!-- About/Information menu -->
+          <div class=" w3-white" style="padding: 20px; margin: 20px;">
+            <!-- Download Link -->
+
+            <div>
+              <div style="width: 400px; display: inline-block; font-size: 30px"><b>Video: </b></div>
+
+              <a id="idImgLink">
+                <button class="btn" style="width: 200px; font-size: 30px"><i class="fa fa-download"></i>
+                  Download</button>
+              </a>
+            </div>
+            <div>
+              <div style="width: 400px; display: inline-block; font-size: 30px"><b>Stream on Drive: </b></div>
+              <a id="idStreamLink">
+                <button class="btn" style="width: 200px; font-size: 30px"><i class="fa fa-globe"></i> Stream</button>
+              </a>
+            </div>
+            <!-- END About/Intro Menu -->
+          </div>
+
+          <!-- END GRID -->
+        </div>
+
+        <!-- END w3-content -->
+      </div>
+
+    </div>
+  </header>
+</body>
+
+</html>

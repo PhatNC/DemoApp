@@ -60,9 +60,9 @@ const multerConfig = {
 
         // only permit image mimetypes
         const image = file.mimetype.startsWith('image/jpeg');
-        const video = file.mimetype.startsWith('video/mp4');
+        // const video = file.mimetype.startsWith('video/mp4');
 
-        if (image || video) {
+        if (image) {
             console.log('File uploaded');
             next(null, true);
         } else {
@@ -207,6 +207,8 @@ async function showResult(auth) {
     })
 
 }
+
+
 
 async function uploadFile(auth) {
     const drive = google.drive({

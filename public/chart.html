@@ -87,8 +87,32 @@
 
     var options = {
       title: "Objective Distribution",
-      bar: { groupWidth: "60%" },
+      titleTextStyle: {
+        fontSize: 25,
+        italic: true
+      },
+      bar: { groupWidth: "70%" },
       legend: { position: "none" },
+      height: 500,
+      vAxis: {
+        textStyle: {
+          fontSize: 25,
+        }
+      },
+      hAxis: {
+        textStyle: {
+          fontSize: 25,
+        }
+      },
+      annotations: {
+        textStyle: {
+          fontSize: 30,
+          bold: true,
+          color: '#AAA'
+        }
+      }
+
+
     };
 
     // var optionsDonut = {
@@ -187,17 +211,23 @@
   <header class="bgimg-1 w3-display-container">
     <div class="container-fluid" style="padding-top: 80px;">
 
-      <div class="w3-content" style="max-width:90%;">
+      <div class="w3-content" style="max-width:95%;">
         <!-- Grid -->
-        <div class="w3-row w3-padding w3-border" style="background-color: white;">
+        <div class="w3-row w3-padding w3-border" style="background-color: #DDD;">
 
           <!-- Blog entries -->
-          <div class="w3-col l8 s12">
+          <div class="w3-col l8 s12" style="background-color: #DDD;">
+            <div class="w3-container w3-white w3-margin w3-padding-large">
+              <div class="w3-center">
+                <h3 style="font-size: 40px; font-weight: bold;">CHART</h3>
+              </div>
+              <div id="barchart_values" style="width: 100%; min-height: 300px;"></div>
+            </div>
 
             <!-- Blog entry -->
             <div class="w3-container w3-white w3-margin w3-padding-large w3-border" style=" min-height: 800px;">
               <div class="w3-center">
-                <h3>VISUALIZATION</h3>
+                <h3 style="font-size: 40px; font-weight: bold;">VISUALIZATION</h3>
                 <!-- <h5>Title description, <span class="w3-opacity">May 2, 2016</span></h5> -->
               </div>
 
@@ -211,24 +241,19 @@
 
           <!-- About/Information menu -->
           <div class="w3-col l4">
-            <div class="w3-container w3-white w3-margin w3-padding-large">
-              <div class="w3-center">
-                <h3>CHART</h3>
-              </div>
-              <div id="barchart_values" style="width: 100%; min-height: 300px;"></div>
-            </div>
 
             <!-- Download Link -->
             <div class="w3-container w3-white w3-margin w3-padding-large">
               <div>
-                <div style="width: 200px; display: inline-block;"><b>Image: </b></div>
+                <div style="width: 350px; display: inline-block; font-size: 25px;"><b>Image: </b></div>
 
                 <a id="idImgLink">
                   <button class="btn"><i class="fa fa-download"></i> Download</button>
                 </a>
               </div>
               <div>
-                <div style="width: 200px; display: inline-block;"><b>Distributional Description: </b></div>
+                <div style="width: 350px; display: inline-block; font-size: 25px;"><b>Distributional Description: </b>
+                </div>
                 <a id="idBBLink">
                   <button class="btn"><i class="fa fa-download"></i> Download</button>
                 </a>
